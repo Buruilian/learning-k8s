@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hellogo
+  namespace: hellogo
+  labels:
+    app: hellogo-app
+spec:
+  replicas: 3
+  minReadySeconds: 5 # Wait 5 seconds after each new pod comes up before marked as "ready"
+  strategy:
+    type: RollingUpdate # describe how we do rolling updates
+    rollingUpdate:
+      maxUnavailable: 1 # When updating take one pod down at a time
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: hellogo-app
+  template:
+    metadata:
+      labels:
+        app: hellogo-app
+    spec:
+      containers:
+      - name: hellogo
+        image: hellogo:v1.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "50m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+        ports:
+          - containerPort: 3000
